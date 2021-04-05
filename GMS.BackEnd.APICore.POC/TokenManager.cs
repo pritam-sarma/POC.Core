@@ -29,24 +29,33 @@ namespace GMS.BackEnd.APICore.POC
             JwtSecurityToken token = handler.CreateJwtSecurityToken(descriptor);
             return handler.WriteToken(token);
         }        
-        public static string ValidateToken(string token)
+        public static bool ValidateToken(string token)
         {
             string username = null;
+            var isValid = false;
+
             ClaimsPrincipal principal = GetPrincipal(token);
             if (principal == null)
-                return null;
+                return isValid;
+
             ClaimsIdentity identity = null;
             try
             {
                 identity = (ClaimsIdentity)principal.Identity;
+
+                Claim usernameClaim = identity.FindFirst(ClaimTypes.Name);
+                username = usernameClaim.Value;
+                
+                if(usernameClaim != null)
+                    isValid = true;
+
             }
-            catch (NullReferenceException)
+            catch (Exception ex)
             {
-                return null;
+                return isValid;
             }
-            Claim usernameClaim = identity.FindFirst(ClaimTypes.Name);
-            username = usernameClaim.Value;
-            return username;
+            
+            return isValid;
         }
         public static ClaimsPrincipal GetPrincipal(string token)
         {
