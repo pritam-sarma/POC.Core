@@ -56,7 +56,7 @@ namespace GMS.BackEnd.APICore.POC.Controllers
             
         }
 
-        public string ValidateClientTokens(string token)
+        private bool ValidateClientTokens(string token)
         {
             return TokenManager.ValidateToken(token);
         }
